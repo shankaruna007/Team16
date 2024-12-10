@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Specific Background</title>
+    <style>
+        body {
+            height: 100vh; /* Ensure the body takes up the full height of the viewport */
+            margin: 0; /* Remove any default margin */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Arrange content in column */
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center; /* Center align the text */
+            background-color: #333; /* Dark background for contrast */
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        ul {
+            list-style-type: none; /* Remove default list bullet points */
+            padding: 0;
+            width: 100%;
+            max-width: 600px; /* Limit the width for a neat presentation */
+            margin: 0 auto; /* Center the list */
+        }
+
+        li {
+            font-size: 1.8em; /* Increase font size */
+            padding: 15px;
+            margin: 10px 0; /* Space between items */
+            border-radius: 10px; /* Rounded corners */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add shadow for text */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for effects */
+        }
+
+        /* Background colors for each list item */
+        li:nth-child(1) {
+            background-color: #1abc9c;
+        }
+
+        li:nth-child(2) {
+            background-color: #3498db;
+        }
+
+        li:nth-child(3) {
+            background-color: #9b59b6;
+        }
+
+        li:nth-child(4) {
+            background-color: #e74c3c;
+        }
+
+        /* Add hover effect */
+        li:hover {
+            transform: scale(1.05); /* Slightly enlarge the item on hover */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Add shadow on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Team16</h1>
+
+    <!-- List of Names -->
+    <ul>
+        <li>Kempanna Karajol</li>
+        <li>Babu Thangaratinam</li>
+        <li>Pennabadi Govardhana</li>
+        <li>Karunakaran Shanmugam</li>
+    </ul>
+
+    <script>
+        // Detect the browser using the userAgent string
+        var userAgent = navigator.userAgent.toLowerCase();
+
+        // Check if the browser is Chrome or Firefox
+        if (userAgent.indexOf("chrome") !== -1 && userAgent.indexOf("edge") === -1) {
+            // Chrome-specific styles (green background)
+            document.body.style.backgroundColor = "green";
+        } else if (userAgent.indexOf("firefox") !== -1) {
+            // Firefox-specific styles (red background)
+            document.body.style.backgroundColor = "red";
+        } else {
+            // Default background color if neither Chrome nor Firefox
+            document.body.style.backgroundColor = "gray";
+        }
+    </script>
+</body>
+</html>
+
