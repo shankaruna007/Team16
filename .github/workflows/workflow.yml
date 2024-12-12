@@ -1,0 +1,71 @@
+name: CI Pipeline for Docker Image
+ 
+on:
+  push:
+    branches:
+      - master  # Trigger pipeline on push to the master branch
+  workflow_dispatch:
+ 
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner provided by GitHub Actions
+ 
+    permissions:
+      id-token: write
+      contents: read
+ 
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout the code
+        uses: actions/checkout@v3
+ 
+      # Step 2: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+ 
+      # Step 3: Configure AWS credentials (Region included here)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Ensure region is passed here
+ 
+      # Step 4: Log in to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          region: us-east-1  # Specify the region here as well
+          mask-password: true
+          registry-type: private
+          skip-logout: false
+ 
+      # Step 5: Build the Docker image
+      - name: Build the Docker image
+        run: |
+          docker build \
+            --build-arg NEXTAUTH_SECRET="my-secret-value" \
+            --build-arg SOA_URL="my-soa-url" \
+            -t 739265271993.dkr.ecr.us-east-1.amazonaws.com/team-web-app:${{ github.sha }} .
+ 
+      # Step 6: Push the Docker image to Amazon ECR
+      - name: Push the Docker image to Amazon ECR
+        run: |
+          docker push 739265271993.dkr.ecr.us-east-1.amazonaws.com/team-web-app:${{ github.sha }}
+ 
+      # Step 7: Run the container on GitHub runner and test the IP (optional)
+      - name: Run container in detached mode
+        run: |
+          # Pull the image from ECR
+          docker pull 739265271993.dkr.ecr.us-east-1.amazonaws.com/team-web-app:${{ github.sha }}
+          # Run the container in detached mode
+          docker run --name my-cont1 -p 80:80 -d 739265271993.dkr.ecr.us-east-1.amazonaws.com/team-web-app:${{ github.sha }}
+          # Test the running container by getting its public IP
+          curl https://api.ipify.org
+ 
+      # Step 8: Clean up Docker images
+      - name: Clean up Docker images
+        if: always()
+        run: |
+          docker rmi -f $(docker images -q) || echo "No images to clean up."
